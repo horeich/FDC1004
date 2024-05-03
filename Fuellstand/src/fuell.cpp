@@ -1,8 +1,6 @@
 #include "fuell.hpp"
 
 #define FDC1004Address 0b1010000 << 1
-
-#define FDC1004_ADRESS 0b1010000 << 1
 #define BYTE_TO_BINARY_PATTERN "%c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c\r\n"
 #define BYTE_TO_BINARY_PATTERN_32 "%c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c %c\r\n"
 
@@ -152,13 +150,20 @@ uint16_t FDC1004::get_GAIN_CAL_CIN4()
 {
     return readRegister(0x14);
 }
-uint16_t FDC1004::get_MANUFACTURER_ID()
+uint16_t FDC1004::getManufacturerId()
 {
     return readRegister(0xFE);
 }
-uint16_t FDC1004::get_DEVICE_ID()
+
+uint16_t FDC1004::getDeviceId()
 {
     return readRegister(0xFF);
+}
+void FDC1004::reset()
+{
+
+    uint16_t value = 0;
+    set_config_register_bit(value, 15, 1);
 }
 
 // bool FDC1004::readRegister(Register reg, uint16_t &value)
@@ -189,11 +194,6 @@ uint16_t FDC1004::readRegister(char registeraddress)
     value = value | (data[0] << 8);
 
     return value;
-}
-
-uint16_t FDC1004::getManufacturerId()
-{
-    return readRegister(0xFE);
 }
 
 // bool FDC1004::readValue(Channel channel, float& value)
@@ -244,13 +244,6 @@ uint32_t FDC1004::getMeasure4()
     return complete_measure_binary4;
 }
 
-void FDC1004::reset()
-{
-
-    uint16_t value = 0;
-    set_config_register_bit(value, 15, 1);
-}
-
 void FDC1004::set_repeated_measurements(bool set)
 {
     // readRegister
@@ -268,78 +261,52 @@ void FDC1004::set_repeated_measurements(bool set)
 
 void FDC1004::init()
 {
-    //    FDC1004 fdc1004(i2c);
-
-    uint16_t value = this->get_config_register();
+    uint16_t value = get_config_register();
     printf("CONFIG REGISTER YY: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
 
-    this->reset();
+    reset();
 
-    value = this->get_config_register();
-
+    value = get_config_register();
+    
     while ((value & 0x8000) != 0)
     {
 
         // wait_us(3000*1000);
     }
-    // value = this->.get_config_register();
 
-    // this->reset();
-
-    this->set_repeated_measurements(true);
+    set_repeated_measurements(true);
 
     printf("After reset, only repeated " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
 
     // this->enableMeasurement(FDC1004::Channel::CIN1); // Messungen aktivieren
 
-    this->setMeasurementRate(FDC1004::MeasurementRate::Rate100);
+    setMeasurementRate(FDC1004::MeasurementRate::Rate100);
 
     // fdc1004.set_measurement_offset_capacitance(FDC1004::Register::ConfigMeasurementReg1, 31);//Einstellbar von 0 bis 31, 0 => kein Offset, 31 => 96,875pF Offset
 
-    uint16_t testausgabe_config1 = this->get_config_register();
+    uint16_t testausgabe_config1 = get_config_register();
     printf("Configurationsregister :  " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(testausgabe_config1));
 
-    // fdc1004.set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::CAPDAC, 31);
-    // uint measureChannel1 = fdc1004.get_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg1);
-
-    testausgabe_config1 = this->get_CONF_MEAS1();
-    printf("Configurationsregister zur Messung 1: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(testausgabe_config1));
-
-    this->set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::DISABLED, 1);
-    this->set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::DISABLED);
-    this->set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg3, FDC1004::Channel::CIN3, FDC1004::Channel::DISABLED);
-    this->set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::DISABLED);
-
-    // uint16_t configreg4 = fdc1004.get_register((char)FDC1004::Register::ConfigMeasurementReg4);
-    // printf("Measurement 4 config register before"BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(configreg4));
-    // fdc1004.set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::CAPDAC, 31);
-    // configreg4 = fdc1004.get_register((char)FDC1004::Register::ConfigMeasurementReg4);
-    // printf("Measurement 4 config register after"BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(configreg4));
-
-    // fdc1004.setMeasurementRate(FDC1004::MeasurementRate::Rate100);
-
-    // printf("config register: %04X\r\n", value);
-    value = this->get_config_register();
-    printf("EWARTET; CONFIG REGISTER 4 5 6 7 gesetzt: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
-
-    // value = 0;
-    // fdc1004.activate_differential_measurements_1(value);
-    printf("Config 1 Measurement register  " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
-
-    // value = fdc1004.get_config_register();
-
-    // printf("CONFIG REGISTER AFTER RESET: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
-    // value = 0;
-    // value = fdc1004.get_config_register();
-
-    // printf("NOCHMAL CONFIG REGISTER AFTER RESET; DAVOR NOCH GETCONFIG: "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
-
-    // offset1 = fdc1004.get_CONF_MEAS1();
-    // printf("CONF_MEAS1:  "BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(offset1));
-
-    printf("config register vor while:  " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
+    bool status=setConfigurationRegister();
+    if(status)
+        printf("Configuration Registers have been configured\n");
+    setGainCalibration(2.314f, FDC1004::Register::gainCal2reg);
+    printf("the gain calibration of CIN1 is %.3f\n",(get_GAIN_CAL_CIN2()/ pow(2, 14)));
 }
 
+
+bool FDC1004::setConfigurationRegister()
+{
+    bool success1,success2,success3,success4;
+    success1=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::DISABLED, 1);
+    success2=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::DISABLED);
+    success3=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg3, FDC1004::Channel::CIN3, FDC1004::Channel::DISABLED);
+    success4=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::DISABLED);
+    if(success1 && success2 && success3 && success4)
+        return true;
+    else
+        return false;
+}
 /*
 bool FDC1004::set_measurement_offset_capacitance(FDC1004::Register measureConfigReg, uint8_t offset){
 
@@ -424,6 +391,7 @@ void FDC1004::write_register(FDC1004::Register reg, uint16_t &reg_value)
     {
         printf("Fehler i2c write");
     }
+    
 }
 /*
 void FDC1004::measurementRate(uint16_t& value, uint16_t rate){
@@ -494,36 +462,66 @@ bool FDC1004::isMeasurementEnabled(FDC1004::Channel CIN)
     return 0;
 }
 
-// void FDC1004::disableMeasurement(FDC1004::Channel CIN)
-// {
-//     uint16_t value = get_config_register();
-//     switch (CIN)
-//     {
-//     case Channel::CIN1:
-//         set_config_register_bit(value, 7, 0);
-//         break;
-//     case Channel::CIN2:
-//         set_config_register_bit(value, 6, 0);
-//         break;
-//     case Channel::CIN3:
-//         set_config_register_bit(value, 5, 0);
-//         break;
-//     case Channel::CIN4:
-//         set_config_register_bit(value, 4, 0);
-//         break;
-//     default:
-//         printf("invalid measurement value");
-//     }
-// }
+bool FDC1004::isMeasurementDone(FDC1004::Channel CIN)
+{
+    uint16_t value= get_config_register();
+    switch(CIN) {
+    case Channel::CIN1:
+        if(value & 1<<3)
+            return 1;
+        else 
+            return 0;
+    case Channel::CIN2:
+        if(value & 1<<2)
+            return 1;
+        else 
+            return 0;
+    case Channel::CIN3:
+        if(value & 1<<1)
+            return 1;
+        else 
+            return 0;
+    case Channel::CIN4:
+        if(value & 1<<0)
+            return 1;
+        else 
+            return 0;
+    default:
+        printf("invalid measurement value");
+    }
+    return 0;
+}
+
+void FDC1004::disableMeasurement(FDC1004::Channel CIN)
+{
+    uint16_t value = get_config_register();
+    switch (CIN)
+    {
+    case Channel::CIN1:
+        set_config_register_bit(value, 7, 0);
+        break;
+    case Channel::CIN2:
+        set_config_register_bit(value, 6, 0);
+        break;
+    case Channel::CIN3:
+        set_config_register_bit(value, 5, 0);
+        break;
+    case Channel::CIN4:
+        set_config_register_bit(value, 4, 0);
+        break;
+    default:
+        printf("invalid measurement value");
+    }
+}
 
 void FDC1004::measure()
 {
     uint32_t measure1, measure2, measure3, measure4;
     static int count = 0;
-    measure1 = this->getMeasure1();
-    measure2 = this->getMeasure2();
-    measure3 = this->getMeasure3();
-    measure4 = this->getMeasure4();
+    measure1 = getMeasure1();
+    measure2 = getMeasure2();
+    measure3 = getMeasure3();
+    measure4 = getMeasure4();
 
     printf("Measure1: %fpF\r\n", (measure1 / pow(2, 19)));
     printf("Measure2: %fpF\r\n", (measure2 / pow(2, 19)));
@@ -550,29 +548,29 @@ void FDC1004::measure()
 //     set_config_register_bit(value, 4, 1);
 // }
 
-void FDC1004::disable_measurement_1()
-{
-    uint16_t value = get_config_register();
-    set_config_register_bit(value, 7, 0);
-}
+// void FDC1004::disable_measurement_1()
+// {
+//     uint16_t value = get_config_register();
+//     set_config_register_bit(value, 7, 0);
+// }
 
-void FDC1004::disable_measurement_2()
-{
-    uint16_t value = get_config_register();
-    set_config_register_bit(value, 6, 0);
-}
+// void FDC1004::disable_measurement_2()
+// {
+//     uint16_t value = get_config_register();
+//     set_config_register_bit(value, 6, 0);
+// }
 
-void FDC1004::disable_measurement_3()
-{
-    uint16_t value = get_config_register();
-    set_config_register_bit(value, 5, 0);
-}
+// void FDC1004::disable_measurement_3()
+// {
+//     uint16_t value = get_config_register();
+//     set_config_register_bit(value, 5, 0);
+// }
 
-void FDC1004::disable_measurement_4()
-{
-    uint16_t value = get_config_register();
-    set_config_register_bit(value, 4, 0);
-}
+// void FDC1004::disable_measurement_4()
+// {
+//     uint16_t value = get_config_register();
+//     set_config_register_bit(value, 4, 0);
+// }
 
 void FDC1004::activate_differential_measurements_1(uint16_t &value)
 {
@@ -679,4 +677,29 @@ void FDC1004::set_register_bit(uint16_t &value, u_int8_t position, uint8_t bit, 
     {
         printf("Fehler i2c write");
     }
+}
+
+bool FDC1004::setGainCalibration(float gain,FDC1004::Register reg )
+{
+    if(gain>= 4 || gain < 0)
+        return 0;
+    uint16_t value=0;
+    write_register(reg, value);
+    value = gain*(pow(2,14));
+    write_register(reg, value);
+    return true;
+}
+
+bool FDC1004::setOffsetCalibration(float offset,FDC1004::Register reg )
+{
+    if(offset>= 16 || offset < -16)
+        return 0;
+    uint16_t value=0;
+    write_register(reg, value);
+    uint16_t frontInteger= (uint16_t)offset;
+    uint16_t backDecimal= offset-frontInteger;
+    backDecimal *= 10000000000;
+    value = backDecimal | (frontInteger << 11);
+    write_register(reg, value);
+    return true;
 }

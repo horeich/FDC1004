@@ -13,13 +13,17 @@ int main(void)
   FDC1004::Channel channelToMeasure=FDC1004::Channel::CIN2;
   FDC1004 fdc1004(i2c);
   fdc1004.init();
-  uint16_t manufacturerId;
+  uint16_t manufacturerId, deviceId;
   manufacturerId= fdc1004.getManufacturerId();
   if (manufacturerId == 0x5449)
   {
       printf("Manufacturer Id is correct\n");
   }
-
+  deviceId= fdc1004.getDeviceId();
+  if (deviceId == 0x1004)
+  {
+      printf("Device Id is correct\n");
+  }
   fdc1004.enableMeasurement(channelToMeasure);
   if (fdc1004.isMeasurementEnabled(channelToMeasure))
   {
@@ -30,8 +34,14 @@ int main(void)
     printf("Measurement is not enabled\n");
   }
 
-  while(1)
-  {
+ 
+    // while(1)
+    // {
     fdc1004.measure();
+    // }
+  if (fdc1004.isMeasurementDone(channelToMeasure))
+  {
+    printf("Measurement of CHANNEL %d is done\n",((int)channelToMeasure+1));
   }
+  
 }

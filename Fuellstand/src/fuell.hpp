@@ -36,6 +36,14 @@ public:
         ConfigMeasurementReg3 = 0x0A,
         ConfigMeasurementReg4 = 0x0B,
         ConfigRegister = 0x0C,
+        gainCal1reg = 0x11,
+        gainCal2reg = 0x12,
+        gainCal3reg = 0x13,
+        gainCal4reg = 0x14,
+        offsetCal1reg = 0x0D,
+        offsetCal2reg = 0x0E,
+        offsetCal3reg = 0x0F,
+        offsetCal4reg = 0x10
     };
 
 public:
@@ -46,6 +54,12 @@ public:
     void init();
     void measure();
     uint16_t getManufacturerId();
+    uint16_t getDeviceId();
+    bool setConfigurationRegister();
+    bool isMeasurementDone(FDC1004::Channel CIN);
+    void disableMeasurement(FDC1004::Channel CIN);
+    bool setGainCalibration(float gain, FDC1004::Register reg);
+    bool setOffsetCalibration(float offset,FDC1004::Register reg );
 
     uint16_t readRegister(char registeraddress);
 
