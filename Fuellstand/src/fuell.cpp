@@ -66,89 +66,9 @@ FDC1004::FDC1004(mbed::I2C &i2c) : _i2c(i2c)
 {
 }
 
-uint16_t FDC1004::get_MEAS1_MSB()
-{
-    return readRegister(0x00);
-}
-uint16_t FDC1004::get_MEAS1_LSB()
-{
-    return readRegister(0x01);
-}
-uint16_t FDC1004::get_MEAS2_MSB()
-{
-    return readRegister(0x02);
-}
-uint16_t FDC1004::get_MEAS2_LSB()
-{
-    return readRegister(0x03);
-}
-uint16_t FDC1004::get_MEAS3_MSB()
-{
-    return readRegister(0x04);
-}
-uint16_t FDC1004::get_MEAS3_LSB()
-{
-    return readRegister(0x05);
-}
-uint16_t FDC1004::get_MEAS4_MSB()
-{
-    return readRegister(0x06);
-}
-uint16_t FDC1004::get_MEAS4_LSB()
-{
-    return readRegister(0x07);
-}
-uint16_t FDC1004::get_CONF_MEAS1()
-{
-    return readRegister(0x08);
-}
-uint16_t FDC1004::get_CONF_MEAS2()
-{
-    return readRegister(0x09);
-}
-uint16_t FDC1004::get_CONF_MEAS3()
-{
-    return readRegister(0x0A);
-}
-uint16_t FDC1004::get_CONF_MEAS4()
-{
-    return readRegister(0x0B);
-}
-uint16_t FDC1004::get_config_register()
+uint16_t FDC1004::getConfigRegister()
 {
     return readRegister(0x0C);
-}
-uint16_t FDC1004::get_OFFSET_CAL_CIN1()
-{
-    return readRegister(0x0D);
-}
-uint16_t FDC1004::get_OFFSET_CAL_CIN2()
-{
-    return readRegister(0x0E);
-}
-uint16_t FDC1004::get_OFFSET_CAL_CIN3()
-{
-    return readRegister(0x0F);
-}
-uint16_t FDC1004::get_OFFSET_CAL_CIN4()
-{
-    return readRegister(0x10);
-}
-uint16_t FDC1004::get_GAIN_CAL_CIN1()
-{
-    return readRegister(0x11);
-}
-uint16_t FDC1004::get_GAIN_CAL_CIN2()
-{
-    return readRegister(0x12);
-}
-uint16_t FDC1004::get_GAIN_CAL_CIN3()
-{
-    return readRegister(0x13);
-}
-uint16_t FDC1004::get_GAIN_CAL_CIN4()
-{
-    return readRegister(0x14);
 }
 uint16_t FDC1004::getManufacturerId()
 {
@@ -163,12 +83,8 @@ void FDC1004::reset()
 {
 
     uint16_t value = 0;
-    set_config_register_bit(value, 15, 1);
+    setConfigRegisterBit(value, 15, 1);
 }
-
-// bool FDC1004::readRegister(Register reg, uint16_t &value)
-// {
-// }
 
 uint16_t FDC1004::readRegister(char registeraddress)
 {
@@ -196,77 +112,63 @@ uint16_t FDC1004::readRegister(char registeraddress)
     return value;
 }
 
-// bool FDC1004::readValue(Channel channel, float& value)
-// {
-
-// }
-
-// bool FDC1004::readRawValue(Channel channel, uint32_t& value)
-// {
-
-// }
-
 uint32_t FDC1004::getMeasure1()
 {
-
-    uint16_t meas1_1 = get_MEAS1_MSB();
-    uint16_t meas1_2 = get_MEAS1_LSB();
-    uint32_t complete_measure_binary1 = meas1_2 >> 8;
-    complete_measure_binary1 += meas1_1 << 8;
+    uint16_t meas1_MSB = readRegister(0x00);
+    uint16_t meas1_LSB = readRegister(0x01);
+    uint32_t complete_measure_binary1 = meas1_LSB >> 8;
+    complete_measure_binary1 += meas1_MSB<< 8;
     return complete_measure_binary1;
 }
 
 uint32_t FDC1004::getMeasure2()
 {
-
-    uint16_t meas2_1 = get_MEAS2_MSB();
-    uint16_t meas2_2 = get_MEAS2_LSB();
-    uint32_t complete_measure_binary2 = meas2_2 >> 8;
-    complete_measure_binary2 += meas2_1 << 8;
+    uint16_t meas2_MSB = readRegister(0x02);
+    uint16_t meas2_LSB = readRegister(0x03);
+    uint32_t complete_measure_binary2 = meas2_LSB >> 8;
+    complete_measure_binary2 += meas2_MSB << 8;
     return complete_measure_binary2;
 }
 uint32_t FDC1004::getMeasure3()
 {
-
-    uint16_t meas3_1 = get_MEAS3_MSB();
-    uint16_t meas3_2 = get_MEAS3_LSB();
-    uint32_t complete_measure_binary3 = meas3_2 >> 8;
-    complete_measure_binary3 += meas3_1 << 8;
+    uint16_t meas3_MSB = readRegister(0x04);
+    uint16_t meas3_LSB = readRegister(0x05);
+    uint32_t complete_measure_binary3 = meas3_LSB >> 8;
+    complete_measure_binary3 += meas3_MSB << 8;
     return complete_measure_binary3;
 }
 uint32_t FDC1004::getMeasure4()
 {
-
-    uint16_t meas4_1 = get_MEAS4_MSB();
-    uint16_t meas4_2 = get_MEAS4_LSB();
-    uint32_t complete_measure_binary4 = meas4_2 >> 8;
-    complete_measure_binary4 += meas4_1 << 8;
+    uint16_t meas4_MSB = readRegister(0x06);
+    uint16_t meas4_LSB = readRegister(0x07);
+    uint32_t complete_measure_binary4 = meas4_LSB >> 8;
+    complete_measure_binary4 += meas4_MSB << 8;
     return complete_measure_binary4;
 }
 
-void FDC1004::set_repeated_measurements(bool set)
+void FDC1004::setRepeatedMeasurements(bool set)
 {
     // readRegister
     uint16_t value = 0;
     if (set) 
     {
-        set_config_register_bit(value, 8, 1);
+        setConfigRegisterBit(value, 8, 1);
     }
     else
     {
-        set_config_register_bit(value, 8, 0);
+        setConfigRegisterBit(value, 8, 0);
     }
     // writeRegister(ConfigRegister, value);
 }
 
 void FDC1004::init()
 {
-    uint16_t value = get_config_register();
+    uint16_t value = getConfigRegister();
     printf("CONFIG REGISTER YY: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
 
     reset();
 
-    value = get_config_register();
+    value = getConfigRegister();
     
     while ((value & 0x8000) != 0)
     {
@@ -274,7 +176,7 @@ void FDC1004::init()
         // wait_us(3000*1000);
     }
 
-    set_repeated_measurements(true);
+    setRepeatedMeasurements(true);
 
     printf("After reset, only repeated " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
 
@@ -282,50 +184,37 @@ void FDC1004::init()
 
     setMeasurementRate(FDC1004::MeasurementRate::Rate100);
 
-    // fdc1004.set_measurement_offset_capacitance(FDC1004::Register::ConfigMeasurementReg1, 31);//Einstellbar von 0 bis 31, 0 => kein Offset, 31 => 96,875pF Offset
+    // fdc1004.setMeasurementOffsetCapacitance(FDC1004::Register::ConfigMeasurementReg1, 31);//Einstellbar von 0 bis 31, 0 => kein Offset, 31 => 96,875pF Offset
 
-    uint16_t testausgabe_config1 = get_config_register();
+    uint16_t testausgabe_config1 = getConfigRegister();
     printf("Configurationsregister :  " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(testausgabe_config1));
 
     bool status=setConfigurationRegister();
     if(status)
         printf("Configuration Registers have been configured\n");
-    setGainCalibration(2.314f, FDC1004::Register::gainCal2reg);
-    printf("the gain calibration of CIN1 is %.3f\n",(get_GAIN_CAL_CIN2()/ pow(2, 14)));
+
+    getMeasure1();
+    getMeasure2();
+    getMeasure3();
+    getMeasure4();
+    
 }
 
 
 bool FDC1004::setConfigurationRegister()
 {
     bool success1,success2,success3,success4;
-    success1=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::DISABLED, 1);
-    success2=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::DISABLED);
-    success3=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg3, FDC1004::Channel::CIN3, FDC1004::Channel::DISABLED);
-    success4=set_measurement_channel_config(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::DISABLED);
+    success1=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::DISABLED, 1);
+    success2=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::DISABLED);
+    success3=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg3, FDC1004::Channel::CIN3, FDC1004::Channel::DISABLED);
+    success4=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::DISABLED);
     if(success1 && success2 && success3 && success4)
         return true;
     else
         return false;
 }
-/*
-bool FDC1004::set_measurement_offset_capacitance(FDC1004::Register measureConfigReg, uint8_t offset){
 
-    uint16_t value = get_register((char)measureConfigReg);
-    if(offset > 31 || offset < 0){
-        //printf("Offset im falschen Bereich, maximal 31");
-        return false;
-    }
-
-    //uint16_t capdac = 0;
-    value |= (offset << 5);
-    write_register(measureConfigReg, value);
-    return true;
-
-}
-
-*/
-
-bool FDC1004::set_measurement_channel_config(FDC1004::Register measureConfigReg, FDC1004::Channel channelA, FDC1004::Channel channelB, uint8_t capdacValue)
+bool FDC1004::setMeasurementChannelConfig(FDC1004::Register measureConfigReg, FDC1004::Channel channelA, FDC1004::Channel channelB, uint8_t capdacValue)
 {
     // uint16_t value = get_register((char)measureConfigReg);
     uint16_t value = 0x00;
@@ -346,39 +235,39 @@ bool FDC1004::set_measurement_channel_config(FDC1004::Register measureConfigReg,
         value |= (capdacValue << 5);
     }
 
-    write_register(measureConfigReg, value);
+    writeRegister(measureConfigReg, value);
     return success;
 }
 
 void FDC1004::setMeasurementRate(FDC1004::MeasurementRate rate)
 {
 
-    uint16_t value = get_config_register();
+    uint16_t value = getConfigRegister();
 
     value &= ~(0x03 << 10);
     value |= ((uint8_t)rate) << 10;
 
     if (rate == FDC1004::MeasurementRate::Rate100)
     {
-        set_config_register_bit(value, 11, 0);
-        set_config_register_bit(value, 10, 1);
+        setConfigRegisterBit(value, 11, 0);
+        setConfigRegisterBit(value, 10, 1);
     }
     else if (rate == FDC1004::MeasurementRate::Rate200)
     {
-        set_config_register_bit(value, 11, 1);
-        set_config_register_bit(value, 10, 0);
+        setConfigRegisterBit(value, 11, 1);
+        setConfigRegisterBit(value, 10, 0);
     }
     else if (rate == FDC1004::MeasurementRate::Rate400)
     {
 
-        set_config_register_bit(value, 11, 1);
-        set_config_register_bit(value, 10, 1);
+        setConfigRegisterBit(value, 11, 1);
+        setConfigRegisterBit(value, 10, 1);
     }
 
-    write_register(Register::ConfigRegister, value);
+    writeRegister(Register::ConfigRegister, value);
 }
 
-void FDC1004::write_register(FDC1004::Register reg, uint16_t &reg_value)
+void FDC1004::writeRegister(FDC1004::Register reg, uint16_t& reg_value)
 {
 
     char data[3];
@@ -393,38 +282,23 @@ void FDC1004::write_register(FDC1004::Register reg, uint16_t &reg_value)
     }
     
 }
-/*
-void FDC1004::measurementRate(uint16_t& value, uint16_t rate){
 
-    if(rate == 100){
-        set_config_register_bit(value, 11, 0);
-        set_config_register_bit(value, 10, 1);
-    } else if(rate == 200){
-        set_config_register_bit(value, 11, 1);
-        set_config_register_bit(value, 10, 0);
-    } else if(rate == 400){
-
-        set_config_register_bit(value, 11, 1);
-        set_config_register_bit(value, 10, 1);
-    }
-}
-*/
 bool FDC1004::enableMeasurement(FDC1004::Channel CIN)
 {
-    uint16_t value = get_config_register();
+    uint16_t value = getConfigRegister();
     switch (CIN)
     {
     case Channel::CIN1:
-        set_config_register_bit(value, 7, 1);
+        setConfigRegisterBit(value, 7, 1);
         return 1;
     case Channel::CIN2:
-        set_config_register_bit(value, 6, 1);
+        setConfigRegisterBit(value, 6, 1);
         return 1;
     case Channel::CIN3:
-        set_config_register_bit(value, 5, 1);
+        setConfigRegisterBit(value, 5, 1);
         return 1;
     case Channel::CIN4:
-        set_config_register_bit(value, 4, 1);
+        setConfigRegisterBit(value, 4, 1);
         return 1;
     default:
         printf("invalid measurement value");
@@ -434,7 +308,7 @@ bool FDC1004::enableMeasurement(FDC1004::Channel CIN)
 
 bool FDC1004::isMeasurementEnabled(FDC1004::Channel CIN)
 {
-    uint16_t value= get_config_register();
+    uint16_t value= getConfigRegister();
     switch(CIN) {
     case Channel::CIN1:
         if(value & 1<<7)
@@ -464,7 +338,7 @@ bool FDC1004::isMeasurementEnabled(FDC1004::Channel CIN)
 
 bool FDC1004::isMeasurementDone(FDC1004::Channel CIN)
 {
-    uint16_t value= get_config_register();
+    uint16_t value= getConfigRegister();
     switch(CIN) {
     case Channel::CIN1:
         if(value & 1<<3)
@@ -494,20 +368,20 @@ bool FDC1004::isMeasurementDone(FDC1004::Channel CIN)
 
 void FDC1004::disableMeasurement(FDC1004::Channel CIN)
 {
-    uint16_t value = get_config_register();
+    uint16_t value = getConfigRegister();
     switch (CIN)
     {
     case Channel::CIN1:
-        set_config_register_bit(value, 7, 0);
+        setConfigRegisterBit(value, 7, 0);
         break;
     case Channel::CIN2:
-        set_config_register_bit(value, 6, 0);
+        setConfigRegisterBit(value, 6, 0);
         break;
     case Channel::CIN3:
-        set_config_register_bit(value, 5, 0);
+        setConfigRegisterBit(value, 5, 0);
         break;
     case Channel::CIN4:
-        set_config_register_bit(value, 4, 0);
+        setConfigRegisterBit(value, 4, 0);
         break;
     default:
         printf("invalid measurement value");
@@ -533,124 +407,85 @@ void FDC1004::measure()
     wait_us(4000 * 1000);
 }
 
-// void FDC1004::enable_measurement_2(){
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 6, 1);
-// }
-
-// void FDC1004::enable_measurement_3(){
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 5, 1);
-// }
-
-// void FDC1004::enable_measurement_4(){
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 4, 1);
-// }
-
-// void FDC1004::disable_measurement_1()
-// {
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 7, 0);
-// }
-
-// void FDC1004::disable_measurement_2()
-// {
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 6, 0);
-// }
-
-// void FDC1004::disable_measurement_3()
-// {
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 5, 0);
-// }
-
-// void FDC1004::disable_measurement_4()
-// {
-//     uint16_t value = get_config_register();
-//     set_config_register_bit(value, 4, 0);
-// }
-
-void FDC1004::activate_differential_measurements_1(uint16_t &value)
+void FDC1004::activateDifferentialMeasurements1(uint16_t &value)
 {
 
-    set_conf_meas1_bit(value, 15, 0);
-    set_conf_meas1_bit(value, 14, 0);
-    set_conf_meas1_bit(value, 13, 0);
+    setConfMeas1Bit(value, 15, 0);
+    setConfMeas1Bit(value, 14, 0);
+    setConfMeas1Bit(value, 13, 0);
 
-    set_conf_meas1_bit(value, 12, 1);
-    set_conf_meas1_bit(value, 11, 1);
-    set_conf_meas1_bit(value, 10, 1);
+    setConfMeas1Bit(value, 12, 1);
+    setConfMeas1Bit(value, 11, 1);
+    setConfMeas1Bit(value, 10, 1);
 }
 
-void FDC1004::activate_differential_measurements_2(uint16_t &value)
+void FDC1004::activateDifferentialMeasurements2(uint16_t &value)
 {
 
-    set_conf_meas2_bit(value, 15, 0);
-    set_conf_meas2_bit(value, 14, 0);
-    set_conf_meas2_bit(value, 13, 1);
+    setConfMeas2Bit(value, 15, 0);
+    setConfMeas2Bit(value, 14, 0);
+    setConfMeas2Bit(value, 13, 1);
 
-    set_conf_meas2_bit(value, 12, 1);
-    set_conf_meas2_bit(value, 11, 1);
-    set_conf_meas2_bit(value, 10, 1);
+    setConfMeas2Bit(value, 12, 1);
+    setConfMeas2Bit(value, 11, 1);
+    setConfMeas2Bit(value, 10, 1);
 }
 
-void FDC1004::activate_differential_measurements_3(uint16_t &value)
+void FDC1004::activateDifferentialMeasurements3(uint16_t &value)
 {
 
-    set_conf_meas3_bit(value, 15, 0);
-    set_conf_meas3_bit(value, 14, 1);
-    set_conf_meas3_bit(value, 13, 0);
+    setConfMeas3Bit(value, 15, 0);
+    setConfMeas3Bit(value, 14, 1);
+    setConfMeas3Bit(value, 13, 0);
 
-    set_conf_meas3_bit(value, 12, 1);
-    set_conf_meas3_bit(value, 11, 1);
-    set_conf_meas3_bit(value, 10, 1);
+    setConfMeas3Bit(value, 12, 1);
+    setConfMeas3Bit(value, 11, 1);
+    setConfMeas3Bit(value, 10, 1);
 }
 
-void FDC1004::activate_differential_measurements_4(uint16_t &value)
+void FDC1004::activateDifferentialMeasurements4(uint16_t &value)
 {
 
-    set_conf_meas4_bit(value, 15, 0);
-    set_conf_meas4_bit(value, 14, 0);
-    set_conf_meas4_bit(value, 13, 0);
+    setConfMeas4Bit(value, 15, 0);
+    setConfMeas4Bit(value, 14, 0);
+    setConfMeas4Bit(value, 13, 0);
 
-    set_conf_meas4_bit(value, 12, 1);
-    set_conf_meas4_bit(value, 11, 1);
-    set_conf_meas4_bit(value, 10, 1);
+    setConfMeas4Bit(value, 12, 1);
+    setConfMeas4Bit(value, 11, 1);
+    setConfMeas4Bit(value, 10, 1);
 }
 
-void FDC1004::set_conf_meas1_bit(uint16_t &value, u_int8_t position, uint8_t bit)
+void FDC1004::setConfMeas1Bit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
 
-    set_register_bit(value, position, bit, 0x08);
+    setRegisterBit(value, position, bit, 0x08);
 }
 
-void FDC1004::set_conf_meas2_bit(uint16_t &value, u_int8_t position, uint8_t bit)
+void FDC1004::setConfMeas2Bit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
 
-    set_register_bit(value, position, bit, 0x09);
+    setRegisterBit(value, position, bit, 0x09);
 }
 
-void FDC1004::set_conf_meas3_bit(uint16_t &value, u_int8_t position, uint8_t bit)
+void FDC1004::setConfMeas3Bit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
 
-    set_register_bit(value, position, bit, 0x0A);
+    setRegisterBit(value, position, bit, 0x0A);
 }
 
-void FDC1004::set_conf_meas4_bit(uint16_t &value, u_int8_t position, uint8_t bit)
+void FDC1004::setConfMeas4Bit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
 
-    set_register_bit(value, position, bit, 0x0B);
+    setRegisterBit(value, position, bit, 0x0B);
 }
 
-void FDC1004::set_config_register_bit(uint16_t &value, u_int8_t position, uint8_t bit)
+void FDC1004::setConfigRegisterBit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
 
-    set_register_bit(value, position, bit, 0x0C);
+    setRegisterBit(value, position, bit, 0x0C);
 }
 
-void FDC1004::set_register_bit(uint16_t &value, u_int8_t position, uint8_t bit, char registeraddress)
+void FDC1004::setRegisterBit(uint16_t &value, u_int8_t position, uint8_t bit, char registeraddress)
 {
 
     // uint8_t FDC1004Address = 0b1010000 << 1;
@@ -684,22 +519,35 @@ bool FDC1004::setGainCalibration(float gain,FDC1004::Register reg )
     if(gain>= 4 || gain < 0)
         return 0;
     uint16_t value=0;
-    write_register(reg, value);
     value = gain*(pow(2,14));
-    write_register(reg, value);
+    writeRegister(reg, value);
     return true;
+}
+
+float FDC1004::getGainCalibration(FDC1004::Register reg)
+{
+    float gain=0;
+    gain = (readRegister((char)reg) / pow(2,14));
+    return gain;
+    
 }
 
 bool FDC1004::setOffsetCalibration(float offset,FDC1004::Register reg )
 {
-    if(offset>= 16 || offset < -16)
+    if(offset>= 16 || offset <= -16)
         return 0;
+    offset=(0.5*offset)+8;
     uint16_t value=0;
-    write_register(reg, value);
-    uint16_t frontInteger= (uint16_t)offset;
-    uint16_t backDecimal= offset-frontInteger;
-    backDecimal *= 10000000000;
-    value = backDecimal | (frontInteger << 11);
-    write_register(reg, value);
+    value=offset*(pow(2,11));
+    writeRegister(reg, value);
     return true;
 }
+
+float FDC1004::getOffsetCalibration(FDC1004::Register reg)
+{
+    float offset=0;
+    offset = (readRegister((char)reg) / pow(2,11) - 8) *2;
+    return offset; 
+}
+
+

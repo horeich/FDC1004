@@ -56,96 +56,59 @@ public:
     uint16_t getManufacturerId();
     uint16_t getDeviceId();
     bool setConfigurationRegister();
+    void setMeasurementRate(FDC1004::MeasurementRate rate);
+    void reset();
+    void measurementRate(uint16_t& value, uint16_t rate);
+    void setRepeatedMeasurements(bool set);
+    bool enableMeasurement(FDC1004::Channel CIN );
+    bool isMeasurementEnabled(FDC1004::Channel CIN);
     bool isMeasurementDone(FDC1004::Channel CIN);
     void disableMeasurement(FDC1004::Channel CIN);
     bool setGainCalibration(float gain, FDC1004::Register reg);
+    float getGainCalibration(FDC1004::Register reg);
     bool setOffsetCalibration(float offset,FDC1004::Register reg );
+    float getOffsetCalibration(FDC1004::Register reg);
+    float convert2Decimal24(uint32_t rawdata);
+    float getOffsetCalibration();
 
     uint16_t readRegister(char registeraddress);
+    uint16_t getConfigRegister();
 
-    uint16_t get_config_register();
-
-    uint16_t get_MEAS1_MSB();
-    uint16_t get_MEAS1_LSB();
-    uint16_t get_MEAS2_MSB();
-    uint16_t get_MEAS2_LSB();
-    uint16_t get_MEAS3_MSB();
-    uint16_t get_MEAS3_LSB();
-    uint16_t get_MEAS4_MSB();
-    uint16_t get_MEAS4_LSB();
-    uint16_t get_CONF_MEAS1();
-    uint16_t get_CONF_MEAS2();
-    uint16_t get_CONF_MEAS3();
-    uint16_t get_CONF_MEAS4();
-    uint16_t get_OFFSET_CAL_CIN1();
-    uint16_t get_OFFSET_CAL_CIN2();
-    uint16_t get_OFFSET_CAL_CIN3();
-    uint16_t get_OFFSET_CAL_CIN4();
-    uint16_t get_GAIN_CAL_CIN1();
-    uint16_t get_GAIN_CAL_CIN2();
-    uint16_t get_GAIN_CAL_CIN3();
-    uint16_t get_GAIN_CAL_CIN4();
-    uint16_t get_MANUFACTURER_ID();
-    uint16_t get_DEVICE_ID();
-
-    
     uint32_t getMeasure1();
     uint32_t getMeasure2();
     uint32_t getMeasure3();
     uint32_t getMeasure4();
 
+    void setRegisterBit(uint16_t& value, u_int8_t position, uint8_t bit, char registeraddress);
+    void setConfigRegisterBit(uint16_t& value, u_int8_t position, uint8_t bit);
 
 
-    void setMeasurementRate(FDC1004::MeasurementRate rate);
-
-    void reset();
-    void measurementRate(uint16_t& value, uint16_t rate);
-    void set_repeated_measurements(bool set);
-
-    bool enableMeasurement(FDC1004::Channel CIN );
-    bool isMeasurementEnabled(FDC1004::Channel CIN);
-    // void enable_measurement_1();
-    // void enable_measurement_2();
-    // void enable_measurement_3();
-    // void enable_measurement_4();
-
-    void disable_measurement_1();
-    void disable_measurement_2();
-    void disable_measurement_3();
-    void disable_measurement_4();
-
-
-    void set_register_bit(uint16_t& value, u_int8_t position, uint8_t bit, char registeraddress);
-
-    void set_config_register_bit(uint16_t& value, u_int8_t position, uint8_t bit);
-
-
-    void set_conf_meas1_bit(uint16_t& value, u_int8_t position, uint8_t bit);
-    void set_conf_meas2_bit(uint16_t& value, u_int8_t position, uint8_t bit);
-    void set_conf_meas3_bit(uint16_t& value, u_int8_t position, uint8_t bit);
-    void set_conf_meas4_bit(uint16_t& value, u_int8_t position, uint8_t bit);
+    void setConfMeas1Bit(uint16_t& value, u_int8_t position, uint8_t bit);
+    void setConfMeas2Bit(uint16_t& value, u_int8_t position, uint8_t bit);
+    void setConfMeas3Bit(uint16_t& value, u_int8_t position, uint8_t bit);
+    void setConfMeas4Bit(uint16_t& value, u_int8_t position, uint8_t bit);
 
     
-    void activate_differential_measurements_1(uint16_t& value);
-    void activate_differential_measurements_2(uint16_t& value);
-    void activate_differential_measurements_3(uint16_t& value);
-    void activate_differential_measurements_4(uint16_t& value);
+    void activateDifferentialMeasurements1(uint16_t& value);
+    void activateDifferentialMeasurements2(uint16_t& value);
+    void activateDifferentialMeasurements3(uint16_t& value);
+    void activateDifferentialMeasurements4(uint16_t& value);
 
-    bool set_measurement_channel_config(
+    bool setMeasurementChannelConfig(
         
         FDC1004::Register configReg, 
         FDC1004::Channel channelA, 
         FDC1004::Channel channelB,
         uint8_t capdacValue = 0);
 
-    bool set_measurement_offset_capacitance(FDC1004::Register configReg, uint8_t offset);
+    bool setMeasurementOffsetCapacitance(FDC1004::Register configReg, uint8_t offset);
 
 
 
 
 private:    
 
-    void write_register(FDC1004::Register register, uint16_t& value);//uint16_t value daovor, test 
+    void writeRegister(FDC1004::Register register, uint16_t& value);//uint16_t value daovor, test 
 
     mbed::I2C& _i2c;
     

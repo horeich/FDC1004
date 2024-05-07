@@ -28,13 +28,12 @@ int main(void)
   if (fdc1004.isMeasurementEnabled(channelToMeasure))
   {
       printf("CHANNEL %d is enabled\n",((int)channelToMeasure+1));
+      wait_us(100*1000);
   }
   else
   {
     printf("Measurement is not enabled\n");
   }
-
- 
     // while(1)
     // {
     fdc1004.measure();
@@ -43,5 +42,13 @@ int main(void)
   {
     printf("Measurement of CHANNEL %d is done\n",((int)channelToMeasure+1));
   }
+  fdc1004.setGainCalibration(2.314f, FDC1004::Register::gainCal2reg);
+  float gain = fdc1004.getGainCalibration(FDC1004::Register::gainCal2reg);
+  printf("the gain calibration of CIN1 is %.3f\n",gain);
+  fdc1004.setOffsetCalibration(6.92f, FDC1004::Register::offsetCal1reg);
+  float offset = fdc1004.getOffsetCalibration(FDC1004::Register::offsetCal1reg);
+  printf("the offset calibration of CIN1 is %.3f\n",offset);
+
+
   
 }
