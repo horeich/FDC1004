@@ -101,6 +101,8 @@ public:
         FDC1004::Channel channelB,
         uint8_t capdacValue = 0);
 
+    bool getMeasurementChannelConfig(FDC1004::Register configReg, FDC1004::Channel& channelA, FDC1004::Channel& channelB, uint8_t& capdacValue);
+
     bool setMeasurementOffsetCapacitance(FDC1004::Register configReg, uint8_t offset);
 
 

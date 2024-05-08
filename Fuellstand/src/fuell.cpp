@@ -189,14 +189,9 @@ void FDC1004::init()
     uint16_t testausgabe_config1 = getConfigRegister();
     printf("Configurationsregister :  " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(testausgabe_config1));
 
-    bool status=setConfigurationRegister();
-    if(status)
-        printf("Configuration Registers have been configured\n");
-
-    getMeasure1();
-    getMeasure2();
-    getMeasure3();
-    getMeasure4();
+    // bool status=setConfigurationRegister();
+    // if(status)
+    //     printf("Configuration Registers have been configured\n");
     
 }
 
@@ -205,7 +200,7 @@ bool FDC1004::setConfigurationRegister()
 {
     bool success1,success2,success3,success4;
     success1=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg1, FDC1004::Channel::CIN1, FDC1004::Channel::DISABLED, 1);
-    success2=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::DISABLED);
+    success2=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg2, FDC1004::Channel::CIN2, FDC1004::Channel::CIN4);
     success3=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg3, FDC1004::Channel::CIN3, FDC1004::Channel::DISABLED);
     success4=setMeasurementChannelConfig(FDC1004::Register::ConfigMeasurementReg4, FDC1004::Channel::CIN4, FDC1004::Channel::DISABLED);
     if(success1 && success2 && success3 && success4)
@@ -220,23 +215,49 @@ bool FDC1004::setMeasurementChannelConfig(FDC1004::Register measureConfigReg, FD
     uint16_t value = 0x00;
     value |= ((uint16_t)channelA << 13);
     value |= ((uint16_t)channelB << 10);
-
-    bool success = true;
+    if((uint16_t)channelA >= (uint16_t)channelB)
+    {
+        printf("CHA cannot be smaller or equal to channel B\n");
+        return false;
+    }
+    else if( channelA == FDC1004::Channel::CAPDAC)
+    {
+        printf("Capdac is not available in channel A\n");
+        return false;
+    }
 
     if (channelB == FDC1004::Channel::CAPDAC)
     {
-
         if (capdacValue > 31)
         {
-
-            // printf("Offset im falschen Bereich, maximal 31");
             return false;
         }
         value |= (capdacValue << 5);
     }
 
     writeRegister(measureConfigReg, value);
-    return success;
+    return true;
+}
+
+bool FDC1004::getMeasurementChannelConfig(FDC1004::Register configReg, FDC1004::Channel& channelA, FDC1004::Channel& channelB, uint8_t& capdacValue)
+{
+    uint16_t value= readRegister((char)configReg);
+
+
+    // value & ((uint16_t)channelA >> 13);
+    // value & ((uint16_t)channelB >> 10);
+
+    printf("CONFIG REGISTER: " BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(value));
+
+    channelA = static_cast<Channel>(value >> 13);
+    channelB = static_cast<Channel>(value >> 10);
+    capdacValue |= (value >> 5); //10010100
+    capdacValue  =  capdacValue << 3; //10100000
+    capdacValue  =  capdacValue >> 3; //00010100
+
+    
+    return true;
+    
 }
 
 void FDC1004::setMeasurementRate(FDC1004::MeasurementRate rate)
@@ -407,77 +428,77 @@ void FDC1004::measure()
     wait_us(4000 * 1000);
 }
 
-void FDC1004::activateDifferentialMeasurements1(uint16_t &value)
-{
+// void FDC1004::activateDifferentialMeasurements1(uint16_t &value)
+// {
 
-    setConfMeas1Bit(value, 15, 0);
-    setConfMeas1Bit(value, 14, 0);
-    setConfMeas1Bit(value, 13, 0);
+//     setConfMeas1Bit(value, 15, 0);
+//     setConfMeas1Bit(value, 14, 0);
+//     setConfMeas1Bit(value, 13, 0);
 
-    setConfMeas1Bit(value, 12, 1);
-    setConfMeas1Bit(value, 11, 1);
-    setConfMeas1Bit(value, 10, 1);
-}
+//     setConfMeas1Bit(value, 12, 1);
+//     setConfMeas1Bit(value, 11, 1);
+//     setConfMeas1Bit(value, 10, 1);
+// }
 
-void FDC1004::activateDifferentialMeasurements2(uint16_t &value)
-{
+// void FDC1004::activateDifferentialMeasurements2(uint16_t &value)
+// {
 
-    setConfMeas2Bit(value, 15, 0);
-    setConfMeas2Bit(value, 14, 0);
-    setConfMeas2Bit(value, 13, 1);
+//     setConfMeas2Bit(value, 15, 0);
+//     setConfMeas2Bit(value, 14, 0);
+//     setConfMeas2Bit(value, 13, 1);
 
-    setConfMeas2Bit(value, 12, 1);
-    setConfMeas2Bit(value, 11, 1);
-    setConfMeas2Bit(value, 10, 1);
-}
+//     setConfMeas2Bit(value, 12, 1);
+//     setConfMeas2Bit(value, 11, 1);
+//     setConfMeas2Bit(value, 10, 1);
+// }
 
-void FDC1004::activateDifferentialMeasurements3(uint16_t &value)
-{
+// void FDC1004::activateDifferentialMeasurements3(uint16_t &value)
+// {
 
-    setConfMeas3Bit(value, 15, 0);
-    setConfMeas3Bit(value, 14, 1);
-    setConfMeas3Bit(value, 13, 0);
+//     setConfMeas3Bit(value, 15, 0);
+//     setConfMeas3Bit(value, 14, 1);
+//     setConfMeas3Bit(value, 13, 0);
 
-    setConfMeas3Bit(value, 12, 1);
-    setConfMeas3Bit(value, 11, 1);
-    setConfMeas3Bit(value, 10, 1);
-}
+//     setConfMeas3Bit(value, 12, 1);
+//     setConfMeas3Bit(value, 11, 1);
+//     setConfMeas3Bit(value, 10, 1);
+// }
 
-void FDC1004::activateDifferentialMeasurements4(uint16_t &value)
-{
+// void FDC1004::activateDifferentialMeasurements4(uint16_t &value)
+// {
 
-    setConfMeas4Bit(value, 15, 0);
-    setConfMeas4Bit(value, 14, 0);
-    setConfMeas4Bit(value, 13, 0);
+//     setConfMeas4Bit(value, 15, 0);
+//     setConfMeas4Bit(value, 14, 0);
+//     setConfMeas4Bit(value, 13, 0);
 
-    setConfMeas4Bit(value, 12, 1);
-    setConfMeas4Bit(value, 11, 1);
-    setConfMeas4Bit(value, 10, 1);
-}
+//     setConfMeas4Bit(value, 12, 1);
+//     setConfMeas4Bit(value, 11, 1);
+//     setConfMeas4Bit(value, 10, 1);
+// }
 
-void FDC1004::setConfMeas1Bit(uint16_t &value, u_int8_t position, uint8_t bit)
-{
+// void FDC1004::setConfMeas1Bit(uint16_t &value, u_int8_t position, uint8_t bit)
+// {
 
-    setRegisterBit(value, position, bit, 0x08);
-}
+//     setRegisterBit(value, position, bit, 0x08);
+// }
 
-void FDC1004::setConfMeas2Bit(uint16_t &value, u_int8_t position, uint8_t bit)
-{
+// void FDC1004::setConfMeas2Bit(uint16_t &value, u_int8_t position, uint8_t bit)
+// {
 
-    setRegisterBit(value, position, bit, 0x09);
-}
+//     setRegisterBit(value, position, bit, 0x09);
+// }
 
-void FDC1004::setConfMeas3Bit(uint16_t &value, u_int8_t position, uint8_t bit)
-{
+// void FDC1004::setConfMeas3Bit(uint16_t &value, u_int8_t position, uint8_t bit)
+// {
 
-    setRegisterBit(value, position, bit, 0x0A);
-}
+//     setRegisterBit(value, position, bit, 0x0A);
+// }
 
-void FDC1004::setConfMeas4Bit(uint16_t &value, u_int8_t position, uint8_t bit)
-{
+// void FDC1004::setConfMeas4Bit(uint16_t &value, u_int8_t position, uint8_t bit)
+// {
 
-    setRegisterBit(value, position, bit, 0x0B);
-}
+//     setRegisterBit(value, position, bit, 0x0B);
+// }
 
 void FDC1004::setConfigRegisterBit(uint16_t &value, u_int8_t position, uint8_t bit)
 {
