@@ -61,7 +61,7 @@ public:
     FDC1004(mbed::I2C& i2c);
 
     bool init();
-    bool measure();
+    bool measure(Channel CIN);
     bool getManufacturerId();
     bool getDeviceId();
     bool setMeasurementRate(FDC1004::MeasurementRate rate);

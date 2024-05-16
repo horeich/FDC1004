@@ -1,6 +1,6 @@
 #include "mbed.h"
 #include "mbed_trace.h"
-#include "fuell.hpp"
+#include "fdc1004.hpp"
 
 using namespace mbed;
 #define DEBUG 0
@@ -80,6 +80,6 @@ int main(void)
   {
     fdc1004.measure(FDC1004::Channel::CIN1);
     fdc1004.measure(FDC1004::Channel::CIN2);
-    fdc1004.measure(FDC1004::Channel::CIN3);
+    // fdc1004.measure(FDC1004::Channel::CIN3);
   }
 }
