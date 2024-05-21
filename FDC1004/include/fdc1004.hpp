@@ -88,6 +88,9 @@ public:
 
     bool getMeasurementChannelConfig(FDC1004::Register configReg, FDC1004::Channel& channelA, FDC1004::Channel& channelB, uint8_t& capdacValue);
 
+    void level_sensor(void);
+    void test();
+
 private:    
 
     bool writeRegister(FDC1004::Register register, uint16_t value);//uint16_t value daovor, test 
