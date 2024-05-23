@@ -1,3 +1,17 @@
+// Copyright 2024 Fawad Siddiqui, Andreas Reichle (HOREICH GmbH)
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+
+//     http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef FDC1004_HPP
 #define FDC1004_HPP
 
@@ -11,7 +25,7 @@ class FDC1004
     static constexpr uint8_t address = 0b1010000 << 1;
 
 public:
-    enum class Channel : uint8_t 
+    enum class Channel : uint8_t
     {
         CIN1 = 0,
         CIN2 = 1,
@@ -20,24 +34,24 @@ public:
         CAPDAC = 4,
         DISABLED = 7,
     };
-    
+
     enum class MeasurementRate : uint8_t
     {
         Rate100 = 1,
         Rate200 = 2,
         Rate400 = 3,
     };
-    
+
     enum class Register : uint8_t
     {
-        meas1MSBreg=0x00,
-        meas1LSBreg=0x01,
-        meas2MSBreg=0x02,
-        meas2LSBreg=0x03,
-        meas3MSBreg=0x04,
-        meas3LSBreg=0x05,
-        meas4MSBreg=0x06,
-        meas4LSBreg=0x07,
+        meas1MSBreg = 0x00,
+        meas1LSBreg = 0x01,
+        meas2MSBreg = 0x02,
+        meas2LSBreg = 0x03,
+        meas3MSBreg = 0x04,
+        meas3LSBreg = 0x05,
+        meas4MSBreg = 0x06,
+        meas4LSBreg = 0x07,
         ConfigMeasurementReg1 = 0x08,
         ConfigMeasurementReg2 = 0x09,
         ConfigMeasurementReg3 = 0x0A,
@@ -56,9 +70,7 @@ public:
     };
 
 public:
-    
-
-    FDC1004(mbed::I2C& i2c);
+    FDC1004(mbed::I2C &i2c);
 
     bool init();
     bool measure(Channel CIN);
@@ -66,37 +78,35 @@ public:
     bool getDeviceId();
     bool setMeasurementRate(FDC1004::MeasurementRate rate);
     bool reset();
-    bool setRepeatedMeasurements(bool );
-    bool enableMeasurement(FDC1004::Channel CIN );
+    bool setRepeatedMeasurements(bool);
+    bool enableMeasurement(FDC1004::Channel CIN);
     bool isMeasurementEnabled(FDC1004::Channel CIN);
     bool isMeasurementDone(FDC1004::Channel CIN);
     bool disableMeasurement(FDC1004::Channel CIN);
     bool setGainCalibration(float gain, FDC1004::Register reg);
-    bool setOffsetCalibration(float offset,FDC1004::Register reg );
-    bool getMeasurement(Register reg, uint32_t& value);
-    bool getGainCalibration(FDC1004::Register reg, float& gain);
-    bool getOffsetCalibration(FDC1004::Register reg,float& offset);
+    bool setOffsetCalibration(float offset, FDC1004::Register reg);
+    bool getMeasurement(Register reg, uint32_t &value);
+    bool getGainCalibration(FDC1004::Register reg, float &gain);
+    bool getOffsetCalibration(FDC1004::Register reg, float &offset);
 
-    bool readRegister(Register regAddress, uint16_t& regValue);
+    bool readRegister(Register regAddress, uint16_t &regValue);
 
     bool setMeasurementChannelConfig(
-        
-        FDC1004::Register configReg, 
-        FDC1004::Channel channelA, 
+
+        FDC1004::Register configReg,
+        FDC1004::Channel channelA,
         FDC1004::Channel channelB,
         uint8_t capdacValue = 0);
 
-    bool getMeasurementChannelConfig(FDC1004::Register configReg, FDC1004::Channel& channelA, FDC1004::Channel& channelB, uint8_t& capdacValue);
+    bool getMeasurementChannelConfig(FDC1004::Register configReg, FDC1004::Channel &channelA, FDC1004::Channel &channelB, uint8_t &capdacValue);
 
     void level_sensor(void);
     void test();
 
-private:    
+private:
+    bool writeRegister(FDC1004::Register register, uint16_t value); // uint16_t value daovor, test
 
-    bool writeRegister(FDC1004::Register register, uint16_t value);//uint16_t value daovor, test 
-
-    mbed::I2C& _i2c;
-    
+    mbed::I2C &_i2c;
 };
 
 #endif
