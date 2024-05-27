@@ -9,7 +9,7 @@ void levelSensor(void)
   FDC1004 fdc1004(i2c);
   uint16_t value = 0;
   fdc1004.reset();
-  wait_us(1000*1000);
+  wait_us(1000 * 1000);
   // below you may enable or disable the set repeated measurements
   fdc1004.setRepeatedMeasurements(true);
 
@@ -27,15 +27,15 @@ void levelSensor(void)
   fdc1004.enableMeasurement(FDC1004::Channel::CIN3);
 
   wait_us(100 * 1000);
-  float measurementValue=0;
+  float measurementValue = 0;
   while (1)
   {
     // measure the relevant channels according to the schematic
-    fdc1004.readMeasurement(FDC1004::Channel::CIN1,measurementValue);
+    fdc1004.readMeasurement(FDC1004::Channel::CIN1, measurementValue);
     printf("Measure 1: %f\n", measurementValue);
-    fdc1004.readMeasurement(FDC1004::Channel::CIN2,measurementValue);
+    fdc1004.readMeasurement(FDC1004::Channel::CIN2, measurementValue);
     printf("Measure 2: %f\n", measurementValue);
-    fdc1004.readMeasurement(FDC1004::Channel::CIN3,measurementValue);
+    fdc1004.readMeasurement(FDC1004::Channel::CIN3, measurementValue);
     printf("Measure 3: %f\n", measurementValue);
   }
 }

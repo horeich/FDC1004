@@ -261,7 +261,7 @@ bool FDC1004::enableMeasurement(FDC1004::Channel CIN)
 {
     uint16_t value = 0;
     readRegister(FDC1004::Register::ConfigRegister, value);
-    value |= 1 << (7 - static_cast<int> (CIN));
+    value |= 1 << (7 - static_cast<int>(CIN));
     writeRegister(FDC1004::Register::ConfigRegister, value);
     return true;
 }
@@ -295,7 +295,7 @@ bool FDC1004::readMeasurement(Channel CIN, float &measurementValue)
 {
     uint32_t measure;
     bool success;
-    success = readMeasurementRaw(static_cast<FDC1004::Register>(static_cast<int>(Register::Meas1MSBreg)+(( static_cast<int>(CIN))+( static_cast<int>(CIN)))), measure);
+    success = readMeasurementRaw(static_cast<FDC1004::Register>(static_cast<int>(Register::Meas1MSBreg) + ((static_cast<int>(CIN)) + (static_cast<int>(CIN)))), measure);
     measurementValue = (measure / pow(2, 19));
     if (isMeasurementDone(CIN))
     {
